@@ -108,6 +108,7 @@ app.get('/mockadmin/*', (req, res) => {
 
 // ...
 
+const PORT = process.env.PORT || 4000;
 const server = app.listen(PORT, '0.0.0.0', () => {
   const addr = server.address();
   console.log(`Mock server listening on port ${PORT}`);
