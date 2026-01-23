@@ -56,19 +56,62 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+// Health Check
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // 1. /mock, /mock-api 등 API 라우트가 먼저!
 
 // 2. 정적 파일 서빙
-app.use(express.static(path.join(__dirname, '../frontend/build')));
-app.use('/mockadmin', express.static(path.join(__dirname, '../frontend/build')));
+const buildPath = path.join(__dirname, '../frontend/build');
+const fs = require('fs');
+if (fs.existsSync(buildPath)) {
+  console.log('Serving frontend from:', buildPath);
+  app.use(express.static(buildPath));
+  app.use('/mockadmin', express.static(buildPath));
+} else {
+  console.warn('Frontend build directory not found:', buildPath);
+}
 
 // 3. SPA 라우팅 (API 경로 제외)
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/mock') || req.path.startsWith('/mock-api')) return next();
-  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+
+  const indexPath = path.join(buildPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath, (err) => {
+      if (err) {
+        console.error('Error sending index.html:', err);
+        res.status(500).send('Error loading frontend');
+      }
+    });
+  } else {
+    res.status(404).send('Frontend not built or index.html missing');
+  }
 });
 app.get('/mockadmin/*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  const indexPath = path.join(buildPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath, (err) => {
+      if (err) {
+        console.error('Error sending index.html:', err);
+        res.status(500).send('Error loading frontend');
+      }
+    });
+  } else {
+    res.status(404).send('Frontend not built or index.html missing');
+  }
+});
+
+// ... (DB initialization and other routes remain)
+
+// ...
+
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Mock server listening on port ${PORT} (0.0.0.0)`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
 });
 
 // DB 초기화 및 마이그레이션
@@ -407,10 +450,9 @@ app.all('/mock/*', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Mock server listening on port ${PORT}`);
-});
+
+// (PORT listening moved up)
+
 
 
 
