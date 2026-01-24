@@ -28,8 +28,11 @@ function normalizeValue(v) {
 }
 
 // 로깅 유틸리티
+const originalLog = console.log;
+const originalError = console.error;
+
 function jsonLog(level, message, meta = {}) {
-  console.log(JSON.stringify({
+  originalLog(JSON.stringify({
     level,
     message,
     timestamp: new Date().toISOString(),
