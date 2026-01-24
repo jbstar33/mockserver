@@ -27,18 +27,34 @@ function normalizeValue(v) {
     .replace(/\s+/g, ''); // 모든 공백 제거
 }
 
-console.log('[DEBUG] Starting backend script...');
-console.log('[DEBUG] CWD:', process.cwd());
-console.log('[DEBUG] __dirname:', __dirname);
-console.log('[DEBUG] PORT env:', process.env.PORT);
+// 로깅 유틸리티
+function jsonLog(level, message, meta = {}) {
+  console.log(JSON.stringify({
+    level,
+    message,
+    timestamp: new Date().toISOString(),
+    ...meta
+  }));
+}
+
+// 기존 console.log/error를 대체하거나 래핑
+console.log = (msg, ...args) => jsonLog('INFO', msg, { args });
+console.error = (msg, ...args) => jsonLog('ERROR', msg, { args });
+
+console.log('Starting backend script...');
+console.log('Environment Info', {
+  cwd: process.cwd(),
+  dirname: __dirname,
+  port: process.env.PORT
+});
 
 process.on('uncaughtException', (err) => {
-  console.error('[CRITICAL] Uncaught Exception:', err);
+  jsonLog('FATAL', 'Uncaught Exception', { error: err.stack || err });
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('[CRITICAL] Unhandled Rejection:', reason);
+  jsonLog('FATAL', 'Unhandled Rejection', { reason: reason });
 });
 
 const express = require('express');
