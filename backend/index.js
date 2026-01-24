@@ -1,4 +1,4 @@
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+//process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 function normalizeKey(k) {
   return String(k).toLowerCase().replace(/[-_\s]/g, '');
@@ -26,6 +26,20 @@ function normalizeValue(v) {
     .replace(/['\"]/g, '') // 내부 따옴표 제거
     .replace(/\s+/g, ''); // 모든 공백 제거
 }
+
+console.log('[DEBUG] Starting backend script...');
+console.log('[DEBUG] CWD:', process.cwd());
+console.log('[DEBUG] __dirname:', __dirname);
+console.log('[DEBUG] PORT env:', process.env.PORT);
+
+process.on('uncaughtException', (err) => {
+  console.error('[CRITICAL] Uncaught Exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[CRITICAL] Unhandled Rejection:', reason);
+});
 
 const express = require('express');
 const bodyParser = require('body-parser');
