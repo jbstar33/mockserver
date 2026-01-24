@@ -44,7 +44,7 @@ function jsonLog(level, message, meta = {}) {
 console.log = (msg, ...args) => jsonLog('INFO', msg, { args });
 console.error = (msg, ...args) => jsonLog('ERROR', msg, { args });
 
-console.log('Starting backend script...');
+console.log('[v2] Starting backend script with JSON logging...');
 console.log('Environment Info', {
   cwd: process.cwd(),
   dirname: __dirname,
