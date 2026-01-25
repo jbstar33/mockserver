@@ -91,6 +91,7 @@ app.use(bodyParser.json());
 
 // Health Check
 app.get('/health', (req, res) => {
+  jsonLog('INFO', 'Health check requested');
   res.status(200).send('OK');
 });
 
