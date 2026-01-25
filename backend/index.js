@@ -41,14 +41,16 @@ function jsonLog(level, message, meta = {}) {
 }
 
 // 기존 console.log/error를 대체하거나 래핑
-console.log = (msg, ...args) => jsonLog('INFO', msg, { args });
-console.error = (msg, ...args) => jsonLog('ERROR', msg, { args });
+// 기존 console.log/error를 대체하거나 래핑
+console.log = (msg, ...args) => jsonLog('INFO', msg, { args: args.length > 0 ? args : undefined });
+console.error = (msg, ...args) => jsonLog('ERROR', msg, { args: args.length > 0 ? args : undefined });
 
-console.log('[v2] Starting backend script with JSON logging...');
-console.log('Environment Info', {
+console.log('[v3] Starting backend script...');
+console.log('Environment Info:', {
   cwd: process.cwd(),
   dirname: __dirname,
-  port: process.env.PORT
+  port: process.env.PORT,
+  dbUrl: process.env.DATABASE_URL ? 'Set' : 'Not Set'
 });
 
 process.on('uncaughtException', (err) => {

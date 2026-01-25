@@ -26,12 +26,5 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/backend ./backend
 COPY --from=builder /app/frontend/build ./frontend/build
 
-# Environment variables
-ENV NODE_ENV=production
-ENV PORT=8080
-
-# Expose port
-EXPOSE 8080
-
-# Start command with file listing for debugging
-CMD ["sh", "-c", "ls -la /app && ls -R /app/backend && node backend/index.js"]
+# Start command
+CMD ["node", "backend/index.js"]
