@@ -33,5 +33,5 @@ ENV PORT=8080
 # Expose port
 EXPOSE 8080
 
-# Start command
-CMD ["node", "backend/index.js"]
+# Start command with file listing for debugging
+CMD ["sh", "-c", "ls -la /app && ls -R /app/backend && node backend/index.js"]
